@@ -1,14 +1,14 @@
 import { useState, useRef, useContext } from "react";
-// import { useHistory } from "react-router-dom";
+import {Link} from 'react-router-dom'
+import { useHistory } from "react-router-dom/cjs/react-router-dom";
 import classes from "./Login.module.css";
 import AuthContext from "./store/auth-context";
 
 const Login = () => {
-//   const history = useHistory();
+  const history = useHistory();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const confirmPasswordInputRef = useRef();
-
 
   const [isLogin, setIsLogin] = useState(true);
   const authCtx = useContext(AuthContext);
@@ -21,7 +21,7 @@ const Login = () => {
     event.preventDefault();
     const emailEntered = emailInputRef.current.value;
     const passwordEntered = passwordInputRef.current.value;
-    const confermPasswordEntered= confirmPasswordInputRef.current.value;
+    const confermPasswordEntered = confirmPasswordInputRef.current.value;
     const emailRegEx = emailEntered.replace(/[^a-zA-Z0-9 ]/g, "");
     let url;
     if (isLogin) {
@@ -31,29 +31,29 @@ const Login = () => {
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCA46gocHDViaISYg1lCBrbs8uhf59zHk4";
     }
-    sendData(url, emailEntered, passwordEntered,confermPasswordEntered)
+    sendData(url, emailEntered, passwordEntered, confermPasswordEntered)
       .then((result) => {
         console.log("result", result);
         authCtx.login(result.idToken);
         localStorage.setItem("email", emailRegEx);
         emailInputRef.current.value = "";
         passwordInputRef.current.value = "";
-        confirmPasswordInputRef.current.value="";
+        confirmPasswordInputRef.current.value = "";
         console.log("User successfully signed up");
-        // history.replace("/store");
+        history.replace("/home");
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  const sendData = async (url, email, password,confermpassword) => {
+  const sendData = async (url, email, password, confermpassword) => {
     const response = await fetch(url, {
       method: "POST",
       body: JSON.stringify({
         email: email,
         password: password,
-        confermpassword:confermpassword,
+        confermpassword: confermpassword,
         returnSecureToken: true,
       }),
       headers: {
@@ -95,20 +95,23 @@ const Login = () => {
           />
         </div>
 
-        {!isLogin&&(<div className={classes.control}>
-          <label htmlFor="password" style={{ marginLeft: "-16rem" }}>
-            confirm Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            required
-            ref={confirmPasswordInputRef}
-          />
-        </div>)}
+        {!isLogin && (
+          <div className={classes.control}>
+            <label htmlFor="confirmpassword" style={{ marginLeft: "-16rem" }}>
+              confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              required
+              ref={confirmPasswordInputRef}
+            />
+          </div>
+        )}
 
         <div className={classes.actions}>
-          <button>{isLogin ? "Login" : "Sign up"}</button>
+          <Link to='/home'> <button>{isLogin ? "Login" : "Sign up"}</button></Link>
+         
           <button
             type="button"
             className={classes.toggle}
